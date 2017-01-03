@@ -147,6 +147,15 @@ class Hand:
                     break
         self.hand = tempHand
 
+    """
+    # Toggles the selection of card
+    #
+    """
+    def toggleSelect(self, theCard):
+        if theCard not in self.selection:
+            self.select(theCard)
+        elif theCard in self.selection:
+            self.deselect(theCard)
 
 
     """
@@ -154,28 +163,30 @@ class Hand:
     #
     """
     def select(self, theCard):
-        selectedCard = self.selectionClass.select(theCard)
-        self.selection.append(selectedCard)
+        if theCard not in self.selection:
+            selectedCard = self.selectionClass.select(theCard)
+            self.selection.append(selectedCard)
 
     """
     # Deselect a card
     #
     """
     def deselect(self, theCard):
-        deselectedCard = self.selectionClass.deselect(theCard)
-        counter = 0
-        for card in self.selection:
-            if card == theCard:
-                self.selection.remove(counter)
-                break
-            counter = counter + 1
+        if theCard in self.selection:
+            deselectedCard = self.selectionClass.deselect(theCard)
+            self.selection.remove(theCard)
+
 
     """
     # Finalize Selection
     #
     """
     def finalizeSelection(self):
+        if (self.selectionClass.isEmpty() == True):
+            return False
+
         validation = self.selectionClass.validate()
+
         if (validation['returnTrue'] == True):
             return validation
         else:

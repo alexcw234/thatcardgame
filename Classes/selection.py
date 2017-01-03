@@ -34,12 +34,8 @@ class Selection:
     # Removes card from selection, then returns the card
     """
     def deselect(self, theCard):
-        counter = 0
-        for card in self.selection:
-            if card == theCard:
-                self.selection.remove(counter)
-                return theCard
-            counter = counter + 1
+        self.selection.remove(theCard)
+        return theCard
 
     """
     # Clears selection
@@ -131,12 +127,12 @@ class Selection:
     def isMatch(self, maxMatchBeforeisBomb):
         firstCard = self.selection[0]
         firstCardVal = firstCard.getCardValue()
-        if (len(self.selection > maxMatchBeforeisBomb)):
+        if (len(self.selection) > maxMatchBeforeisBomb):
             return False
 
         for card in self.selection:
             tempCardVal = card.getCardValue()
-            if (firstCardVal != tempCardValue):
+            if (firstCardVal != tempCardVal):
                 return False
         return True
 
@@ -148,11 +144,11 @@ class Selection:
     def isBomb(self, minBeforeisNotBomb):
         firstCard = self.selection[0]
         firstCardVal = firstCard.getCardValue()
-        if (len(self.selection < minBeforeisNotBomb)):
+        if (len(self.selection) < minBeforeisNotBomb):
             return False
         for card in self.selection:
             tempCardVal = card.getCardValue()
-            if (firstCardVal != tempCardValue):
+            if (firstCardVal != tempCardVal):
                 return False
         return True
 
@@ -165,13 +161,13 @@ class Selection:
     def isStraight(self, minStraightRequired):
         firstCard = self.selection[0]
         firstCardVal = firstCard.getCardValue()
-        if (len(self.selection < minStraightRequired)):
+        if (len(self.selection) < minStraightRequired):
             return False
 
         for cardInd in range(len(self.selection) - 1):
 
             tempCardVal = self.selection[cardInd + 1].getCardValue()
-            if (firstCardVal + 1 != tempCardValue):
+            if (firstCardVal + 1 != tempCardVal):
                 return False
 
             firstCardVal = tempCardVal

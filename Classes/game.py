@@ -42,6 +42,10 @@ class Game:
     # The field
     field = []
 
+    # Bomb cycle flag
+    bombCycle = False
+
+
     """
     # Initializes a new game.
     # Parameters:
@@ -165,17 +169,25 @@ class Game:
                 finalSelection = {}
                 while (selecting == True):
                     # Selection phase
+                    print ("Selection:")
+                    for card in playinghand.getSelection():
+                        print (card.getFullDesc())
+
                     userinput = input()
 
                     if (userinput == ''):
                         finalSelection = playinghand.finalizeSelection()
-                        selecting = False
-                    elif (int(userinput) < 0 and int(userinput) * -1 < playinghand.getLength()):
-                        cardToDeSel = playinghand.getCardByIndex(int(userinput) * -1)
-                        playinghand.deselect(cardtoDeSel)
+
+                        if (finalSelection['returnTrue'] == True):
+                            selecting = False
+                        else:
+                            print ("Invalid selection, try again")
+                            playinghand.clearSelection()
+
                     elif (int(userinput) >= 0 and int(userinput) < playinghand.getLength()):
                         cardToSel = playinghand.getCardByIndex(int(userinput))
-                        playinghand.select(cardToSel)
+                        playinghand.toggleSelect(cardToSel)
+
                     elif (userinput == "pass"):
                         break
                     else:
@@ -183,6 +195,7 @@ class Game:
 
                 if (selecting == True):
                     passcount = passcount + 1
+                    playinghand.clearSelection()
                     break
 
                 if (self.isValidPlay(finalSelection)):
@@ -207,7 +220,7 @@ class Game:
         else:
             tempgroup = self.field[len(self.field) - 1]
 
-            if (len(tempgroup) != selectionDetail['groupLength']):
+            if (len(tempgroup) != selectionDetail['groupLength'] and selectionDetail['groupType'] != 'Bomb'):
                 return False
 
             if (selectionDetail['groupType'] == 'Bomb'):
