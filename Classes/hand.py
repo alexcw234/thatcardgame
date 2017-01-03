@@ -115,8 +115,6 @@ class Hand:
                     break
         self.hand = tempHand
 
-
-
     """
     # Sorts the hand by rank
     """
@@ -188,6 +186,7 @@ class Hand:
         validation = self.selectionClass.validate()
 
         if (validation['returnTrue'] == True):
+            self.selection = validation['theSelection']
             return validation
         else:
             return False

@@ -146,9 +146,10 @@ class Game:
     """
     def roundMain(self):
         currentplayer = 0
-
+        passcount = 0
+        self.bombCycle = False
         while (True):
-            passcount = 0
+
             playinghand = self.playerHands[currentplayer]
             print ("Current player:")
             print (currentplayer)
@@ -173,25 +174,39 @@ class Game:
                     for card in playinghand.getSelection():
                         print (card.getFullDesc())
 
-                    userinput = input()
+                    userinputstr = input()
+                    userinput = userinputstr
 
                     if (userinput == ''):
                         finalSelection = playinghand.finalizeSelection()
 
-                        if (finalSelection['returnTrue'] == True):
+                        if (finalSelection != False):
                             selecting = False
                         else:
                             print ("Invalid selection, try again")
                             playinghand.clearSelection()
 
-                    elif (int(userinput) >= 0 and int(userinput) < playinghand.getLength()):
-                        cardToSel = playinghand.getCardByIndex(int(userinput))
-                        playinghand.toggleSelect(cardToSel)
-
-                    elif (userinput == "pass"):
+                    elif (userinputstr == "pass"):
                         break
+
                     else:
-                        print ("Invalid input, try again")
+                        intOfInput = 0
+                        wasAnInt = False
+                        try:
+                            intOfInput = int(userinput)
+                        except ValueError:
+                            pass
+                        else:
+                            wasAnInt = True
+
+                        if (wasAnInt == True):
+                            if (int(userinput) >= 0 and int(userinput) < playinghand.getLength()):
+                                cardToSel = playinghand.getCardByIndex(int(userinput))
+                                playinghand.toggleSelect(cardToSel)
+                            else:
+                                print ("Invalid input, try again")
+                        else:
+                            print ("Invalid input, try again")
 
                 if (selecting == True):
                     passcount = passcount + 1
@@ -223,10 +238,16 @@ class Game:
             if (len(tempgroup) != selectionDetail['groupLength'] and selectionDetail['groupType'] != 'Bomb'):
                 return False
 
-            if (selectionDetail['groupType'] == 'Bomb'):
+            if (selectionDetail['groupType'] == 'Bomb' and self.bombCycle == False):
+                self.bombCycle = True
                 return True
+            elif (selectionDetail['groupType'] == 'Bomb' and self.bombCycle == True):
+                if (tempgroup[0].getCardValue() <= selectionDetail['groupPower']):
+                    return True
+                else:
+                    return False
             elif (selectionDetail['groupType'] == 'Straight'):
-                if (tempgroup[1] == tempgroup[0] + 1 and selectionDetail['groupPower'] >= tempgroup[0] ):
+                if (tempgroup[1].getCardValue() == tempgroup[0].getCardValue() + 1 and selectionDetail['groupPower'] >= tempgroup[0].getCardValue() ):
                     return True
                 else:
                     return False

@@ -103,9 +103,9 @@ class Selection:
             gPower = self.selection[0].getCardValue()
             gLength = len(self.selection)
         else:
-            return {'returnTrue' : False, 'groupType' : None, 'groupLength': None, 'groupPower' : None}
+            return {'returnTrue' : False, 'groupType' : None, 'groupLength': None, 'groupPower' : None, 'theSelection' : None}
 
-        return {'returnTrue' : True, 'groupType' : gType, 'groupLength': gLength, 'groupPower': gPower}
+        return {'returnTrue' : True, 'groupType' : gType, 'groupLength': gLength, 'groupPower': gPower, 'theSelection' : self.selection}
 
 
     """
