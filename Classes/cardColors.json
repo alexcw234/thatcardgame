@@ -1,0 +1,9 @@
+{
+   "colors" :
+          [
+            { "name" : "Red"
+            },
+            { "name" : "Black"
+            }
+          ]
+}

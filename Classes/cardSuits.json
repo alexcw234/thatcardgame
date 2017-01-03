@@ -1,0 +1,17 @@
+{
+   "suits" :
+          [
+            { "name" : "Hearts",
+              "notColor" : "Black"
+            },
+            { "name" : "Diamonds",
+              "notColor" : "Black"
+            },
+            { "name" : "Clubs",
+              "notColor" : "Red"
+            },
+            { "name" : "Spades",
+              "notColor" : "Red"
+            }
+          ]
+}
