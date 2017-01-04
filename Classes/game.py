@@ -39,11 +39,17 @@ class Game:
     # List of player hands
     playerHands = []
 
+    # List of player scores
+    playerScores = []
+
     # The field
     field = []
 
     # Bomb cycle flag
     bombCycle = False
+
+    # How much bonus the round winner gets
+    winningMultiplier = 2
 
 
     """
@@ -52,9 +58,12 @@ class Game:
     #   players | total number of players
     #
     """
-    def __init__(self, players, baseSize):
+    def __init__(self, players, baseSize, winmult):
         self.numPlayers = players
         self.deckbaseSize = baseSize
+        self.playerScores = []
+        self.winningMultiplier = winmult
+
         print ("Initialized")
 
 
@@ -85,7 +94,8 @@ class Game:
                 self.playerHands[pl].sortHand()
                 self.playerHands[pl].printHand()
 
-
+            for pl in range(self.numPlayers):
+                self.playerScores.append(0)
 
         else:
             return False
@@ -141,14 +151,55 @@ class Game:
         return theDeck
 
 
+
+    """
+    # Controls the flow of the game
+    #
+    #
+    """
+    def gameMain(self):
+        gameOver = False
+
+        while (gameOver == False):
+            self.cycleMain()
+
+
+
+    """
+    # Controls flow of the cycle
+    #
+    #
+    #
+    """
+    def cycleMain(self):
+
+        roundWinner = 0
+        cycleOver = False
+        while (cycleOver == False):
+            roundWinner = self.roundMain(roundWinner)
+
+            self.endround(roundWinner)
+
+            self.newroundSetup(roundWinner)
+
+
+
+
+
     """
     # Controls flow of the round
+    #
+    # Returns: the number of the player who won the round.
+    #
     """
-    def roundMain(self):
-        currentplayer = 0
+    def roundMain(self, cplayer):
+        currentplayer = cplayer
+        lastActivePlayer = None
         passcount = 0
+        roundOver = False
         self.bombCycle = False
-        while (True):
+
+        while (roundOver == False):
 
             playinghand = self.playerHands[currentplayer]
             print ("Current player:")
@@ -157,7 +208,7 @@ class Game:
             if (len(self.field) > 0):
                 print ("Current field:")
 
-                for card in self.field[len(self.field) - 1]:
+                for card in self.field[len(self.field) - 1]['theSelection']:
                     print (card.getFullDesc())
 
             print ("Current Hand:")
@@ -187,8 +238,8 @@ class Game:
                             playinghand.clearSelection()
 
                     elif (userinputstr == "pass"):
-                        break
 
+                        break
                     else:
                         intOfInput = 0
                         wasAnInt = False
@@ -213,18 +264,28 @@ class Game:
                     playinghand.clearSelection()
                     break
 
+
                 if (self.isValidPlay(finalSelection)):
                     validplay = True
-                    self.playgroup(playinghand.getSelection())
+                    finalSelection['playedBy'] = currentplayer
+                    self.playgroup(finalSelection)
                     playinghand.selectionPlayed()
+                    lastActivePlayer = currentplayer
+                    passcount = 0
                 else:
                     print ("Can't play that, try again!")
                     playinghand.clearSelection()
+
+
+            if (passcount >= self.numPlayers):
+                roundOver = True
 
             currentplayer = currentplayer + 1
             if (currentplayer > self.numPlayers - 1):
                 currentplayer = 0
 
+
+        return lastActivePlayer
 
     """
     # Checks to see is you can really play that valid selection
@@ -233,7 +294,7 @@ class Game:
         if (len(self.field) == 0):
             return True
         else:
-            tempgroup = self.field[len(self.field) - 1]
+            tempgroup = self.field[len(self.field) - 1]['theSelection']
 
             if (len(tempgroup) != selectionDetail['groupLength'] and selectionDetail['groupType'] != 'Bomb'):
                 return False
@@ -260,12 +321,103 @@ class Game:
     """
     # Plays the group
     """
-    def playgroup(self, theselection):
-        self.field.append(theselection)
+    def playgroup(self, thegroup):
+        self.field.append(thegroup)
 
 
 
 
 
+    """
+    # Controls end of round operation flow
+    # eg. scoring
+    #
+    #
+    #
+    """
+    def endround(self, winner):
 
-#
+        print ("Player %d won the round!" % (winner))
+        self.scoreRound(winner)
+        playerNo = 0
+        print ("Current Scores")
+        for playerscore in self.playerScores:
+            print ("Player %d : %d" % (playerNo, playerscore))
+            playerNo = playerNo + 1
+
+
+
+    """
+    # Scores the groups from the round.
+    #
+    #
+    """
+    def scoreRound(self, winner):
+        playertoScore = None
+
+        tempScoringArray = []
+
+        # Group scoring
+        while not self.fieldEmpty():
+
+            score = 0
+
+            scoringGroup = self.field.pop()
+            playertoScore = scoringGroup['playedBy']
+
+            score = self.calcScore(scoringGroup)
+
+            if (playertoScore == winner):
+                score = score * self.winningMultiplier
+
+
+            self.playerScores[playertoScore] = self.playerScores[playertoScore] + score
+            tempScoringArray.append(scoringGroup)
+
+
+        # Escalation scoring
+        while (len(tempScoringArray) > 0):
+            count = 0
+            score = 0
+            scoringGroup = tempScoringArray.pop()
+
+
+    """
+    # Calculates the score of a group
+    #
+    #
+    """
+    def calcScore(self, sGroup):
+        thescore = 0
+        scoringGroup = sGroup
+        theSelection = scoringGroup['theSelection']
+
+        if (scoringGroup['groupType'] == 'Bomb'):
+            pass
+        elif (scoringGroup['groupType'] == 'Straight'):
+            pass
+        else:
+            pass
+
+        return thescore
+
+    """
+    # Determines if field is empty.
+    #
+    """
+    def fieldEmpty(self):
+        if (len(self.field) == 0):
+            return True
+        else:
+            return False
+
+
+    """
+    # Controls setup for next round
+    #
+    #
+    #
+    #
+    """
+    def newroundSetup(self, winner):
+        pass
