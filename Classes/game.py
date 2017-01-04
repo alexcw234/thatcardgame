@@ -45,6 +45,9 @@ class Game:
     # The field
     field = []
 
+    # The exit order
+    exitOrder = []
+
     # Bomb cycle flag
     bombCycle = False
 
@@ -163,6 +166,10 @@ class Game:
         while (gameOver == False):
             self.cycleMain()
 
+            self.endcycle()
+
+            self.newcycleSetup()
+
 
 
     """
@@ -180,7 +187,10 @@ class Game:
 
             self.endround(roundWinner)
 
-            self.newroundSetup(roundWinner)
+            if (len(self.exitOrder) >= self.numPlayers - 1
+                cycleOver = True
+            else:
+                self.newroundSetup(roundWinner)
 
 
 
@@ -280,10 +290,16 @@ class Game:
             if (passcount >= self.numPlayers):
                 roundOver = True
 
-            currentplayer = currentplayer + 1
-            if (currentplayer > self.numPlayers - 1):
-                currentplayer = 0
+            findingNextPlayer = True
 
+            while (findingNextPlayer):
+                currentplayer = currentplayer + 1
+
+                if (currentplayer > self.numPlayers - 1):
+                    currentplayer = 0
+
+                if (currentplayer not in self.exitOrder):
+                    findingNextPlayer = False
 
         return lastActivePlayer
 
@@ -338,6 +354,8 @@ class Game:
     def endround(self, winner):
 
         print ("Player %d won the round!" % (winner))
+
+        # Scoring
         self.scoreRound(winner)
         playerNo = 0
         print ("Current Scores")
@@ -346,6 +364,10 @@ class Game:
             playerNo = playerNo + 1
 
 
+        # Check if winner has exit
+        lengthOfWinningHand = self.playerhands[winner]
+        if (lengthOfWinningHand == 0):
+            exitOrder.append(winner)
 
     """
     # Scores the groups from the round.
@@ -421,3 +443,40 @@ class Game:
     """
     def newroundSetup(self, winner):
         pass
+
+
+
+    """
+    # Controls end of cycle
+    #
+    #
+    """
+    def endcycle(self):
+        pass
+
+
+
+
+    """
+    # Controls setup for new Cycle
+    #
+    #
+    #
+    #
+    """
+    def newcycleSetup(self):
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+#

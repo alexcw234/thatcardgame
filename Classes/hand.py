@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
+
 from random import shuffle
 from .card import Card
 from .selection import Selection
