@@ -187,7 +187,7 @@ class Game:
 
             self.endround(roundWinner)
 
-            if (len(self.exitOrder) >= self.numPlayers - 1
+            if (len(self.exitOrder) >= self.numPlayers - 1):
                 cycleOver = True
             else:
                 self.newroundSetup(roundWinner)
